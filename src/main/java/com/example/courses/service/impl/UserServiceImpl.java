@@ -1,12 +1,14 @@
 package com.example.courses.service.impl;
 
-import com.example.courses.model.Course;
 import com.example.courses.model.User;
 import com.example.courses.repository.InMemoryUserDAO;
 import com.example.courses.service.CoursesService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
+@AllArgsConstructor
 public class UserServiceImpl implements CoursesService<User> {
     private InMemoryUserDAO userDAO;
     @Override
@@ -17,11 +19,6 @@ public class UserServiceImpl implements CoursesService<User> {
     @Override
     public List<User> read() {
         return userDAO.findAll();
-    }
-
-    @Override
-    public void update(User entity) {
-        userDAO.save(entity);
     }
 
     @Override
@@ -43,11 +40,6 @@ public class UserServiceImpl implements CoursesService<User> {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void delete(Long id) {
-        userDAO.deleteById(id);
     }
 
     @Override

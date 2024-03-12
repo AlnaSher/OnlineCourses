@@ -1,13 +1,14 @@
 package com.example.courses.service.impl;
 
-import com.example.courses.model.Course;
 import com.example.courses.model.Lesson;
-import com.example.courses.model.User;
 import com.example.courses.repository.InMemoryLessonDAO;
 import com.example.courses.service.CoursesService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
+@AllArgsConstructor
 public class LessonServiceImpl implements CoursesService<Lesson> {
     private InMemoryLessonDAO lessonDAO;
     @Override
@@ -18,11 +19,6 @@ public class LessonServiceImpl implements CoursesService<Lesson> {
     @Override
     public List<Lesson> read() {
         return lessonDAO.findAll();
-    }
-
-    @Override
-    public void update(Lesson entity) {
-        lessonDAO.save(entity);
     }
 
     @Override
@@ -44,11 +40,6 @@ public class LessonServiceImpl implements CoursesService<Lesson> {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void delete(Long id) {
-        lessonDAO.deleteById(id);
     }
 
     @Override

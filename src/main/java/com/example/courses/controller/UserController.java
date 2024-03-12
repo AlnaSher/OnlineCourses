@@ -1,8 +1,6 @@
 package com.example.courses.controller;
 
-import com.example.courses.model.Course;
 import com.example.courses.model.User;
-import com.example.courses.service.impl.CourseServiceImpl;
 import com.example.courses.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/v1/user")
 @AllArgsConstructor
 public class UserController {
-    private static UserServiceImpl service;
+    private final UserServiceImpl service;
     @GetMapping
     public List<User> findAllCourses(){
         return service.read();
