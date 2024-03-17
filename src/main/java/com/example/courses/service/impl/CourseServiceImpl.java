@@ -11,11 +11,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class CourseServiceImpl implements CoursesService<Course> {
+    @Autowired
     private InMemoryCourseDAO courseDAO;
-    @Override
-    public Course findByName(String name){
-        return courseDAO.findByName(name);
-    }
     @Override
     public Course create(Course entity) {
         return courseDAO.save(entity);
@@ -27,24 +24,20 @@ public class CourseServiceImpl implements CoursesService<Course> {
     }
 
     @Override
-    public boolean updateByName(String name, String newName) {
-        Course existing = courseDAO.findByName(name);
-        if(null != existing){
-            existing.setName(newName);
-            courseDAO.save(existing);
-            return true;
-        }
-        return false;
+    public boolean update(Course entity) {
+        courseDAO.save(entity);
+        return true;
     }
 
     @Override
-    public boolean deleteByName(String name) {
-        Course deleted = courseDAO.findByName(name);
-        if(null != deleted){
-            courseDAO.delete(deleted);
-            return true;
-        }
-        return false;
+    public Course getById(long id) {
+        return courseDAO.getById(id);
+    }
+
+    @Override
+    public boolean delete(long id) {
+        courseDAO.deleteById(id);
+        return true;
     }
 
 }

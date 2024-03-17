@@ -1,8 +1,9 @@
 package com.example.courses.controller;
 
-import com.example.courses.model.User;
+import com.example.courses.model.Student;
 import com.example.courses.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,32 +13,33 @@ import java.util.List;
 @RequestMapping("/api/v1/user")
 @AllArgsConstructor
 public class UserController {
+    @Autowired
     private final UserServiceImpl service;
     @GetMapping
-    public List<User> findAllCourses(){
+    public List<Student> findAllCourses(){
         return service.read();
     }
 
     @GetMapping("/find")
-    public User findByName(@RequestParam String name){
-        return service.findByName(name);
+    public Student findByName(@RequestParam long id){
+        return service.getById(id);
     }
 
-    @PostMapping("/addCourse")
-    public User addCourse(@RequestBody User user){
+    @PostMapping("/addUser")
+    public Student addCourse(@RequestBody Student user){
         return service.create(user);
     }
-    @PatchMapping("/updateCourse")
-    public ResponseEntity<String> updateByName(@RequestParam String name, @RequestParam String newName){
-        if(service.updateByName(name, newName)){
+    @PatchMapping("/updateUser")
+    public ResponseEntity<String> updateByName(@RequestBody Student user){
+        if(service.update(user)){
             return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         return new ResponseEntity<>("Fail", HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteByName(@RequestParam String name){
-        if(service.deleteByName(name)){
+    public ResponseEntity<String> deleteByName(@RequestParam long id){
+        if(service.delete(id)){
             return new ResponseEntity<>("Success", HttpStatus.OK);
         }
         return new ResponseEntity<>("Fail", HttpStatus.NOT_FOUND);

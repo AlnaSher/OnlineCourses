@@ -6,9 +6,9 @@ public interface CoursesService<T> {
 
     List<T> read();
 
-    boolean updateByName(String name, String newName);
+    boolean update(T entity);
 
-    boolean deleteByName(String name);
+    boolean delete(long id);
 
-    T findByName(String name);
+    T getById(long id);
 }
