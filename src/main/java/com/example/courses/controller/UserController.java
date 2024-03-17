@@ -2,19 +2,22 @@ package com.example.courses.controller;
 
 import com.example.courses.model.Student;
 import com.example.courses.service.impl.UserServiceImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("/api/v1/user")
-@AllArgsConstructor
 public class UserController {
-    @Autowired
     private final UserServiceImpl service;
+
+    public UserController(UserServiceImpl service) {
+        this.service = service;
+    }
+
     @GetMapping
     public List<Student> findAllCourses(){
         return service.read();
@@ -22,7 +25,12 @@ public class UserController {
 
     @GetMapping("/find")
     public Student findByName(@RequestParam long id){
-        return service.getById(id);
+        try {
+            return service.getById(id);
+        }
+        catch(NoSuchElementException e){
+            return new Student();
+        }
     }
 
     @PostMapping("/addUser")

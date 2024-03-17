@@ -4,8 +4,6 @@ import com.example.courses.model.Student;
 import com.example.courses.repository.InMemoryUserDAO;
 import com.example.courses.service.CoursesService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +11,13 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class UserServiceImpl implements CoursesService<Student> {
-    @Autowired
-    private InMemoryUserDAO studentDAO;
+    private final InMemoryUserDAO studentDAO;
+
+    public UserServiceImpl(InMemoryUserDAO studentDAO) {
+        this.studentDAO = studentDAO;
+    }
+
     @Override
     public Student create(Student entity) {
         return studentDAO.save(entity);

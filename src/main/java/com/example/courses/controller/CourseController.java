@@ -2,20 +2,21 @@ package com.example.courses.controller;
 
 import com.example.courses.model.Course;
 import com.example.courses.service.impl.CourseServiceImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/course")
-@AllArgsConstructor
 public class CourseController {
-    @Autowired
     private final CourseServiceImpl service;
+
+    public CourseController(CourseServiceImpl service) {
+        this.service = service;
+    }
 
     @GetMapping
     public List<Course> findAllCourses(){
@@ -23,8 +24,13 @@ public class CourseController {
     }
 
     @GetMapping("/find")
-    public Course findByName(@RequestParam long id){
-        return service.getById(id);
+    public Course findById(@RequestParam long id){
+        try {
+            return service.getById(id);
+        }
+        catch(NoSuchElementException e){
+            return new Course();
+        }
     }
 
     @PostMapping("/addCourse")

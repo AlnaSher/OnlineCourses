@@ -1,18 +1,23 @@
 package com.example.courses.service.impl;
 
 import com.example.courses.model.Lesson;
+import com.example.courses.model.Student;
 import com.example.courses.repository.InMemoryLessonDAO;
 import com.example.courses.service.CoursesService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
-@AllArgsConstructor
 public class LessonServiceImpl implements CoursesService<Lesson> {
-    @Autowired
-    private InMemoryLessonDAO lessonDAO;
+    private final InMemoryLessonDAO lessonDAO;
+
+    public LessonServiceImpl(InMemoryLessonDAO lessonDAO) {
+        this.lessonDAO = lessonDAO;
+    }
+
     @Override
     public Lesson create(Lesson entity) {
         return lessonDAO.save(entity);
@@ -37,7 +42,10 @@ public class LessonServiceImpl implements CoursesService<Lesson> {
 
     @Override
     public Lesson getById(long id) {
-        return lessonDAO.getById(id);
+        Optional<Lesson> ls = lessonDAO.findById(id);
+        if(ls.isPresent())
+            return ls.get();
+        else throw new NoSuchElementException("Lesson not found with ID: " + id);
     }
 
 }
