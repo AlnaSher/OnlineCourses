@@ -1,7 +1,6 @@
 package com.example.courses.service.impl;
 
 import com.example.courses.model.Lesson;
-import com.example.courses.model.Student;
 import com.example.courses.repository.InMemoryLessonDAO;
 import com.example.courses.service.CoursesService;
 import org.springframework.stereotype.Service;
