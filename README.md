@@ -15,8 +15,17 @@ You can evaluate the quality of the code
 
   1. Clone the repository.
   2. Connect to a database.
-  3. Run the application.
-  4. Make a request.
+  3. Configure the `application.properties` as shown below
+     ```
+spring.datasource.url=jdbc:postgresql://localhost:5432/CoursesDB
+spring.datasource.username=postgres
+spring.datasource.password=ggggg
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
+     ```
+  5. Run the application.
+  6. Make a request.
 <h1>Example of response</h1>
 
 **Request**
