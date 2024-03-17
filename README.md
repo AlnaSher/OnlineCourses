@@ -17,12 +17,12 @@ You can evaluate the quality of the code
   2. Connect to a database.
   3. Configure the `application.properties` as shown below
      ```
-spring.datasource.url=jdbc:postgresql://localhost:5432/CoursesDB
-spring.datasource.username=postgres
-spring.datasource.password=ggggg
-spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.open-in-view=false
+      spring.datasource.url=jdbc:postgresql://localhost:5432/CoursesDB
+      spring.datasource.username=postgres
+      spring.datasource.password=ggggg
+      spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+      spring.jpa.hibernate.ddl-auto=update
+      spring.jpa.open-in-view=false
      ```
   5. Run the application.
   6. Make a request.
