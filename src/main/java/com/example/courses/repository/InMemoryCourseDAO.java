@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InMemoryCourseDAO extends JpaRepository<Course, Long> {
     Course findByName(String name);
+    boolean existsByName(String name);
 }

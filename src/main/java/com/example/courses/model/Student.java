@@ -10,6 +10,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Data
+@Table(name = "student")
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +18,6 @@ public class Student {
 
     private String name;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "students")
     private List<Course> courses;
 }

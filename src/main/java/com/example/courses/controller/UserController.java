@@ -1,55 +1,59 @@
 package com.example.courses.controller;
 
+import com.example.courses.dto.student.StudentDTO;
 import com.example.courses.model.Student;
 import com.example.courses.service.impl.UserServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/user")
 public class UserController {
     private final UserServiceImpl service;
-
-    public UserController(UserServiceImpl service) {
-        this.service = service;
-    }
+    private static final String SUCCESS = "Success";
 
     @GetMapping
-    public List<Student> findAllCourses(){
-        return service.read();
+    public List<StudentDTO> findAllStudents(){
+        return service.findAllStudents();
     }
 
     @GetMapping("/find")
-    public Student findByName(@RequestParam long id){
-        try {
-            return service.getById(id);
+    public ResponseEntity<StudentDTO> findByName(@RequestParam String name){
+        StudentDTO student = service.findByName(name);
+        if (student == null) {
+            return ResponseEntity.notFound().build();
         }
-        catch(NoSuchElementException e){
-            return new Student();
-        }
+        return ResponseEntity.ok(student);
     }
 
-    @PostMapping("/addUser")
-    public Student addCourse(@RequestBody Student user){
-        return service.create(user);
-    }
-    @PatchMapping("/updateUser")
-    public ResponseEntity<String> updateByName(@RequestBody Student user){
-        if(service.update(user)){
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+    @PostMapping("/addStudent")
+    public ResponseEntity<String> addStudent(@RequestBody Student student){
+        Optional<Student> savedStudent = service.addStudent(student);
+        if (savedStudent.isPresent()) {
+            return new ResponseEntity<>(SUCCESS, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("The course with that name already exists", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("Fail", HttpStatus.NOT_FOUND);
+    }
+    @PatchMapping("/update")
+    public ResponseEntity<String> updateByName(@RequestParam Long id, @RequestParam String name){
+        if(service.updateStudent(id, name)){
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Fail update", HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteByName(@RequestParam long id){
-        if(service.delete(id)){
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+    public ResponseEntity<String> deleteByName(@RequestParam String name){
+        if(service.deleteStudentByName(name)){
+            return new ResponseEntity<>(SUCCESS, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Fail", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Failed to delete", HttpStatus.NOT_FOUND);
     }
 }
