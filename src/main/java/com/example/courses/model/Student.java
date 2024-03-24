@@ -17,6 +17,11 @@ public class Student {
 
     private String name;
 
-    @ManyToMany(mappedBy = "students")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "course_student",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
     private List<Course> courses;
 }

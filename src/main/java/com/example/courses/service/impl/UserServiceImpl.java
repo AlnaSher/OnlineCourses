@@ -1,5 +1,9 @@
 package com.example.courses.service.impl;
 
+import com.example.courses.cache.CacheEntity;
+import com.example.courses.dto.course.CourseNameDTO;
+import com.example.courses.dto.lesson.LessonDTO;
+import com.example.courses.dto.lesson.LessonNameDTO;
 import com.example.courses.dto.student.StudentDTO;
 import com.example.courses.mapper.student.StudentDTOMapper;
 import com.example.courses.model.Course;
@@ -21,14 +25,20 @@ public class UserServiceImpl {
     private final InMemoryUserDAO studentDAO;
     private final InMemoryCourseDAO courseDAO;
     private final StudentDTOMapper mapper;
+    private final CacheEntity<Integer, StudentDTO> studentCache;
     public List<StudentDTO> findAllStudents() {
         return studentDAO.findAll().stream().map(mapper).toList();
     }
     public StudentDTO findByName(String name) {
+        int hashCode = name.hashCode();
+        StudentDTO cachedStudent = studentCache.get(hashCode);
+        if(cachedStudent != null)
+            return cachedStudent;
         Student student = studentDAO.findByName(name);
         if (student == null) {
             return null;
         }
+
         return mapper.apply(student);
     }
     public Optional<Student> addStudent(Student student) {
@@ -59,6 +69,7 @@ public class UserServiceImpl {
     public boolean deleteStudentByName(String name) {
         Student student = studentDAO.findByName(name);
         if (student != null) {
+            studentCache.remove(student.getName().hashCode());
             studentDAO.delete(student);
             return true;
         }
@@ -69,7 +80,9 @@ public class UserServiceImpl {
 
         if (studentOptional.isPresent()) {
             Student student = studentOptional.get();
+            studentCache.remove(student.getName().hashCode());
             student.setName(name);
+            studentCache.put(name.hashCode(), mapper.apply(student));
             studentDAO.save(student);
             return true;
         }

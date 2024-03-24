@@ -1,5 +1,7 @@
 package com.example.courses.service.impl;
 
+import com.example.courses.cache.CacheEntity;
+import com.example.courses.dto.course.CourseNameDTO;
 import com.example.courses.dto.lesson.LessonDTO;
 import com.example.courses.mapper.lesson.LessonDTOMapper;
 import com.example.courses.model.Course;
@@ -20,14 +22,20 @@ public class LessonServiceImpl {
     private final InMemoryLessonDAO lessonDAO;
     private final InMemoryCourseDAO courseDAO;
     private final LessonDTOMapper mapper;
+    private final CacheEntity<Integer, LessonDTO> lessonCache;
     public List<LessonDTO> findAllLessons() {
         return lessonDAO.findAll().stream().map(mapper).toList();
     }
     public LessonDTO findByName(String name) {
+        int hashCode = name.hashCode();
+        LessonDTO cachedLesson = lessonCache.get(hashCode);
+        if(cachedLesson != null)
+            return cachedLesson;
         Lesson lesson = lessonDAO.findByName(name);
         if (lesson == null) {
             return null;
         }
+        lessonCache.put(hashCode, mapper.apply(lesson));
         return mapper.apply(lesson);
     }
     public Optional<Lesson> addLesson(Lesson lesson) {
@@ -44,7 +52,9 @@ public class LessonServiceImpl {
     }
 
     public void deleteLessonById(Long id) {
-
+        int hash = lessonDAO.findById(id).getClass().getName().hashCode();
+        if(lessonCache.containsKey(hash))
+            lessonCache.remove(hash);
         lessonDAO.deleteById(id);
     }
     public boolean updateLesson(Long id, String name) {
@@ -52,7 +62,9 @@ public class LessonServiceImpl {
 
         if (lessonOptional.isPresent()) {
             Lesson lesson = lessonOptional.get();
+            lessonCache.remove(lesson.getName().hashCode());
             lesson.setName(name);
+            lessonCache.put(name.hashCode(), mapper.apply(lesson));
             lessonDAO.save(lesson);
             return true;
         }

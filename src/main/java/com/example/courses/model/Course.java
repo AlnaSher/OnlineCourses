@@ -14,10 +14,11 @@ public class Course {
 
     private String name;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "course_id")
     private List<Lesson> lessons;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "course_student",
             joinColumns = @JoinColumn(name = "course_id"),

@@ -1,6 +1,10 @@
 package com.example.courses.service.impl;
 
+import com.example.courses.cache.CacheEntity;
 import com.example.courses.dto.course.CourseDTO;
+import com.example.courses.dto.lesson.LessonDTO;
+import com.example.courses.dto.lesson.LessonNameDTO;
+import com.example.courses.dto.student.StudentNameDTO;
 import com.example.courses.mapper.course.CourseDTOMapper;
 import com.example.courses.model.Course;
 import com.example.courses.model.Lesson;
@@ -24,15 +28,22 @@ public class CourseServiceImpl {
     private final InMemoryLessonDAO lessonDAO;
     private final InMemoryUserDAO studentDAO;
     private final CourseDTOMapper mapper;
+    private final CacheEntity<Integer, CourseDTO> courseCache;
 
     public List<CourseDTO> findAllCourses() {
         return courseDAO.findAll().stream().map(mapper).toList();
     }
     public CourseDTO findByName(String name) {
+        int hashCode = name.hashCode();
+        CourseDTO cachedCourse = courseCache.get(hashCode);
+        if(cachedCourse != null)
+            return cachedCourse;
+
         Course course = courseDAO.findByName(name);
         if (course == null) {
             return null;
         }
+
         return mapper.apply(course);
     }
 
@@ -74,6 +85,7 @@ public class CourseServiceImpl {
         Course course = courseDAO.findByName(name);
 
         if (course != null) {
+            courseCache.remove(name.hashCode());
             lessonDAO.deleteAll(course.getLessons());
             courseDAO.delete(course);
             return true;
@@ -86,7 +98,9 @@ public class CourseServiceImpl {
 
         if (courseOptional.isPresent()) {
             Course course = courseOptional.get();
+            courseCache.remove(course.getName().hashCode());
             course.setName(name);
+            courseCache.remove(name.hashCode());
             courseDAO.save(course);
             return true;
         }
